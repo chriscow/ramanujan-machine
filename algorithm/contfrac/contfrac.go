@@ -1,10 +1,8 @@
-package algo
+package contfrac
 
 import "log"
 
-type ContinuedFraction struct{}
-
-// Calc calculates the continued fraction
+// ContinuedFraction calculates the continued fraction
 //
 // Parameters:
 // a - a list of additive constant (first element) + denominator values
@@ -20,7 +18,7 @@ type ContinuedFraction struct{}
 // otherwise the result is
 //
 // a[0] + b[0] / (a[1] + b[1] / (a[2] + b[2] / a[3] ...))
-func (cf ContinuedFraction) Calc(a, b []float64) float64 {
+func Solve(a, b []float64) float64 {
 	var res float64
 	res = 1
 

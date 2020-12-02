@@ -1,17 +1,27 @@
-package sequence
+package polynomial
 
 import (
 	"log"
 	"math"
 )
 
-// PolynomialSequence implements Generator interface to create a sequence of
-// numbers from solving polynomials
-// type PolynomialSequence struct{}
+// Solve calculates the polynomial represented by the list of coeffs
+// coeffs - polynomial coefficients
+// 		 a + b*x + c*x^2 ...
+// x      - a value to substitute
+func Solve(coeffs []float64, x float64) float64 {
+	var sum float64
+	for i := range coeffs {
+		sum += coeffs[i] * math.Pow(x, float64(i))
+	}
 
-// Polynomial calculates the sequence of all polynomial results using the coefficiant
+	return sum
+}
+
+// Sequence calculates the sequence of all polynomial results using the coefficiant
 // ranges passed in and the values in the range from polyRange[0] to polyRange[1]
-func Polynomial(coeffs [][]float64, polyLow, polyHigh float64) <-chan float64 {
+// and returns them through a channel
+func Sequence(coeffs [][]float64, polyLow, polyHigh float64) <-chan float64 {
 	res := make(chan float64)
 	ch := coefficients(coeffs[0], coeffs[1], coeffs[2])
 
@@ -23,7 +33,7 @@ func Polynomial(coeffs [][]float64, polyLow, polyHigh float64) <-chan float64 {
 		defer close(res)
 		for coeff := range ch {
 			for x := polyLow; x < polyHigh; x++ {
-				res <- polynomial(coeff, x)
+				res <- Solve(coeff, x)
 			}
 		}
 	}()
@@ -31,7 +41,7 @@ func Polynomial(coeffs [][]float64, polyLow, polyHigh float64) <-chan float64 {
 	return res
 }
 
-// Coefficients returns a channel that returns all possible combinations of
+// coefficients returns a channel that returns all possible combinations of
 // numbers in the range arguments
 func coefficients(aRange, bRange, cRange []float64) <-chan []float64 {
 	ch := make(chan []float64)
@@ -49,19 +59,6 @@ func coefficients(aRange, bRange, cRange []float64) <-chan []float64 {
 	}()
 
 	return ch
-}
-
-// Polynomial calculates the polynomial represented by the list of coeffs
-// coeffs - polynomial coefficients
-// 		 a + b*x + c*x^2 ...
-// x      - a value to substitute
-func polynomial(coeffs []float64, x float64) float64 {
-	var sum float64
-	for i := range coeffs {
-		sum += coeffs[i] * math.Pow(x, float64(i))
-	}
-
-	return sum
 }
 
 // func polyrange(aCoeff, bCoeff []float64, low, high float64) <-chan float

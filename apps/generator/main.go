@@ -2,64 +2,48 @@ package main
 
 import (
 	"log"
-	"ramanujan/internal/algo"
+	algo "ramanujan/algorithm"
+	seq "ramanujan/sequence"
 )
 
-type Algorithm interface {
-	Calc(a, b []float64) float64
-}
-
-// type Generator interface {
-// 	Generate(coeffs [][]float64, rangeLow, rangeHigh float64) <-chan float64
-// }
-
-type SeqenceGenerator func(coeffs [][]float64, rangeLow, rangeHigh float64) <-chan float64
-
-type Sequence struct {
-	generator SeqenceGenerator
-	coeff     [][]float64 // [[a-range] [b-range] [c-range]]
-	rangeLow  float64
-	rangeHigh float64
-}
-
 type SideConf struct {
-	algorithms []Algorithm
+	algorithms []algo.Algorithm
 	postproc   bool
 	blacklist  []float64
-	aSeqs      []Sequence
-	bSeqs      []Sequence
+	aSeqs      []seq.Config
+	bSeqs      []seq.Config
 }
 
 func main() {
 
 	rhs := SideConf{
-		algorithms: []Algorithm{
-			algo.ContinuedFraction{},
+		algorithms: []algo.Algorithm{
+			algo.ContinuedFraction,
 		},
 		postproc:  false,
 		blacklist: []float64{-2, -1, 0, 1, 2},
-		aSeqs: []Sequence{
-			Sequence{
-				generator: algo.PolynomialSequence{},
-				coeff: [][]float64{
+		aSeqs: []seq.Config{
+			seq.Config{
+				Generator: seq.Polynomial,
+				Coeff: [][]float64{
 					[]float64{1, 4},
 					[]float64{0, 2},
 					[]float64{0, 1},
 				},
-				rangeLow:  0,
-				rangeHigh: 201,
+				RangeLow:  0,
+				RangeHigh: 201,
 			},
 		},
-		bSeqs: []Sequence{
-			Sequence{
-				generator: algo.PolynomialSequence{},
-				coeff: [][]float64{
+		bSeqs: []seq.Config{
+			seq.Config{
+				Generator: seq.Polynomial,
+				Coeff: [][]float64{
 					[]float64{1, 4},
 					[]float64{0, 2},
 					[]float64{0, 1},
 				},
-				rangeLow:  0,
-				rangeHigh: 201,
+				RangeLow:  0,
+				RangeHigh: 201,
 			},
 		},
 	}

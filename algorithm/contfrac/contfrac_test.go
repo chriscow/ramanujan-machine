@@ -1,8 +1,9 @@
-package algo
+package contfrac
 
 import (
 	"log"
 	"math"
+	poly "ramanujan/sequence/polynomial"
 	"testing"
 )
 
@@ -11,12 +12,11 @@ func TestCFPhi(t *testing.T) {
 	bSeq := make([]float64, 200)
 	coeff := []float64{1, 0, 0}
 	for i := 0; i < 200; i++ {
-		aSeq[i] = polynomial(coeff, float64(i))
-		bSeq[i] = polynomial(coeff, float64(i))
+		aSeq[i] = poly.Sequence(coeff, float64(i))
+		bSeq[i] = poly.Sequence(coeff, float64(i))
 	}
 
-	alg := ContinuedFraction{}
-	res := alg.Calc(aSeq, bSeq)
+	res := ContinuedFraction(aSeq, bSeq)
 	if res != math.Phi {
 		t.Log("expected", res, "==", math.Phi)
 		t.Fail()
@@ -29,8 +29,7 @@ func TestCFPhi2(t *testing.T) {
 		seq[i] = 1
 	}
 
-	cf := ContinuedFraction{}
-	res := cf.Calc(seq, nil)
+	res := ContinuedFraction(seq, nil)
 	if res != math.Phi {
 		t.Log("expected", res, "==", math.Phi)
 		t.Fail()
@@ -45,15 +44,14 @@ func TestCFEuler(t *testing.T) {
 	b := []float64{0, -1, 0}
 
 	for i := 0; i < 200; i++ {
-		aSeq[i] = polynomial(a, float64(i))
-		bSeq[i] = polynomial(b, float64(i))
+		aSeq[i] = seq.Polynomial(a, float64(i))
+		bSeq[i] = seq.Polynomial(b, float64(i))
 	}
 
 	log.Println(aSeq[:5])
 	log.Println(bSeq[:5])
 
-	alg := ContinuedFraction{}
-	res := alg.Calc(aSeq, bSeq)
+	res := ContinuedFraction(aSeq, bSeq)
 	if res != math.E {
 		t.Log("expected", res, "==", math.E)
 		t.Fail()
