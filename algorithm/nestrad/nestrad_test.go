@@ -30,3 +30,28 @@ func TestNRPhi(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestRamanNR(t *testing.T) {
+	a := []float64{1, 0, 0}
+	b := []float64{2, 1, 0}
+
+	aSeq := make([]float64, 200)
+	bSeq := make([]float64, 200)
+
+	for i := range aSeq {
+		aSeq[i] = polynomial.Solve(a, float64(i))
+		bSeq[i] = polynomial.Solve(b, float64(i))
+	}
+
+	// Finds 3  (Ramanujan’s nested radical)
+	res, err := Solve(aSeq, bSeq)
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	if res != 3 {
+		t.Log("expected", res, "== 3")
+		t.Fail()
+	}
+}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	algo "ramanujan/algorithm"
 	seq "ramanujan/sequence"
 )
@@ -16,39 +15,37 @@ type SideConf struct {
 
 func main() {
 
-	rhs := SideConf{
-		algorithms: []algo.Algorithm{
-			algo.ContinuedFraction,
-		},
-		postproc:  false,
-		blacklist: []float64{-2, -1, 0, 1, 2},
-		aSeqs: []seq.Config{
-			seq.Config{
-				Generator: seq.Polynomial,
-				Coeff: [][]float64{
-					[]float64{1, 4},
-					[]float64{0, 2},
-					[]float64{0, 1},
-				},
-				RangeLow:  0,
-				RangeHigh: 201,
-			},
-		},
-		bSeqs: []seq.Config{
-			seq.Config{
-				Generator: seq.Polynomial,
-				Coeff: [][]float64{
-					[]float64{1, 4},
-					[]float64{0, 2},
-					[]float64{0, 1},
-				},
-				RangeLow:  0,
-				RangeHigh: 201,
-			},
-		},
-	}
-
-	log.Println(rhs)
+	// rhs := SideConf{
+	// 	algorithms: []algo.Algorithm{
+	// 		algo.ContinuedFraction,
+	// 	},
+	// 	postproc:  false,
+	// 	blacklist: []float64{-2, -1, 0, 1, 2},
+	// 	aSeqs: []seq.Config{
+	// 		seq.Config{
+	// 			Generator: seq.Polynomial,
+	// 			Coeff: [][]float64{
+	// 				[]float64{1, 4},
+	// 				[]float64{0, 2},
+	// 				[]float64{0, 1},
+	// 			},
+	// 			RangeLow:  0,
+	// 			RangeHigh: 201,
+	// 		},
+	// 	},
+	// 	bSeqs: []seq.Config{
+	// 		seq.Config{
+	// 			Generator: seq.Polynomial,
+	// 			Coeff: [][]float64{
+	// 				[]float64{1, 4},
+	// 				[]float64{0, 2},
+	// 				[]float64{0, 1},
+	// 			},
+	// 			RangeLow:  0,
+	// 			RangeHigh: 201,
+	// 		},
+	// 	},
+	// }
 
 	// count := 0
 	// for alg := range rhs.algorithms {
