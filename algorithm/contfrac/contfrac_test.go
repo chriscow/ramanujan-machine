@@ -8,15 +8,15 @@ import (
 )
 
 func TestCFPhi(t *testing.T) {
-	aSeq := make([]float64, 200)
-	bSeq := make([]float64, 200)
+	a := make([]float64, 200)
+	b := make([]float64, 200)
 	coeff := []float64{1, 0, 0}
 	for i := 0; i < 200; i++ {
-		aSeq[i] = poly.Sequence(coeff, float64(i))
-		bSeq[i] = poly.Sequence(coeff, float64(i))
+		a[i] = poly.Solve(coeff, float64(i))
+		b[i] = poly.Solve(coeff, float64(i))
 	}
 
-	res := ContinuedFraction(aSeq, bSeq)
+	res := Solve(a, b)
 	if res != math.Phi {
 		t.Log("expected", res, "==", math.Phi)
 		t.Fail()
@@ -29,7 +29,7 @@ func TestCFPhi2(t *testing.T) {
 		seq[i] = 1
 	}
 
-	res := ContinuedFraction(seq, nil)
+	res := Solve(seq, nil)
 	if res != math.Phi {
 		t.Log("expected", res, "==", math.Phi)
 		t.Fail()
@@ -44,14 +44,14 @@ func TestCFEuler(t *testing.T) {
 	b := []float64{0, -1, 0}
 
 	for i := 0; i < 200; i++ {
-		aSeq[i] = seq.Polynomial(a, float64(i))
-		bSeq[i] = seq.Polynomial(b, float64(i))
+		aSeq[i] = poly.Solve(a, float64(i))
+		bSeq[i] = poly.Solve(b, float64(i))
 	}
 
 	log.Println(aSeq[:5])
 	log.Println(bSeq[:5])
 
-	res := ContinuedFraction(aSeq, bSeq)
+	res := Solve(aSeq, bSeq)
 	if res != math.E {
 		t.Log("expected", res, "==", math.E)
 		t.Fail()
@@ -73,8 +73,7 @@ func TestCFEuler2(t *testing.T) {
 	log.Println(aSeq[:5])
 	log.Println(bSeq[:5])
 
-	alg := ContinuedFraction{}
-	res := alg.Calc(aSeq, bSeq)
+	res := Solve(aSeq, bSeq)
 	if res != math.E {
 		t.Log("expected", res, "==", math.E)
 		t.Fail()
