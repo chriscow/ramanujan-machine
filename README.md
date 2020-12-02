@@ -1,7 +1,7 @@
 # The Ramanujan Machine
-This is an implementation of the Ramanujan Machine ideas as described in the paper:
+This is an implementation of the [Ramanujan Machine](http://www.ramanujanmachine.com/) ideas as described in the paper:
 
-[The Ramanujan Machine: Automatically Generated Conjectures on Fundamental Constants][1]
+> [The Ramanujan Machine: Automatically Generated Conjectures on Fundamental Constants](https://arxiv.org/pdf/1907.00205.pdf)
 
 The Ramanujan Machine is a brute force, algorithmic approach to finding conjectures
 for [fundamental constants](https://www.wikiwand.com/en/List_of_mathematical_constants) 
@@ -27,5 +27,3 @@ Simply run `make all` to build all the binaries and copy them somewhere on your 
 `go test ./...`
 
 ### Running
-
-[1]: https://arxiv.org/pdf/1907.00205.pdf [The Ramanujan Machine: Automatically Generated Conjectures on Fundamental Constants]
