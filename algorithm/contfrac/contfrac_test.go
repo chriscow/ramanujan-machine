@@ -46,6 +46,8 @@ func TestCFPhi2(t *testing.T) {
 	}
 }
 
+// TestCFEuler finds the Euler constant using a continued fraction of the form:
+//
 func TestCFEuler(t *testing.T) {
 	aSeq := make([]float64, 200)
 	bSeq := make([]float64, 200)
@@ -57,9 +59,6 @@ func TestCFEuler(t *testing.T) {
 		aSeq[i] = poly.Solve(a, float64(i))
 		bSeq[i] = poly.Solve(b, float64(i))
 	}
-
-	log.Println(aSeq[:5])
-	log.Println(bSeq[:5])
 
 	res, err := Solve(aSeq, bSeq)
 	if err != nil {
@@ -84,9 +83,6 @@ func TestCFEuler2(t *testing.T) {
 	for i := 1; i < 148; i++ {
 		bSeq[i-1] = float64(-i)
 	}
-
-	log.Println(aSeq[:5])
-	log.Println(bSeq[:5])
 
 	res, err := Solve(aSeq, bSeq)
 	if err != nil {

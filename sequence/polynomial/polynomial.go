@@ -21,24 +21,31 @@ func Solve(coeffs []float64, x float64) float64 {
 // Sequence calculates the sequence of all polynomial results using the coefficiant
 // ranges passed in and the values in the range from polyRange[0] to polyRange[1]
 // and returns them through a channel
-func Sequence(coeffs [][]float64, polyLow, polyHigh float64) <-chan float64 {
-	res := make(chan float64)
-	ch := coefficients(coeffs[0], coeffs[1], coeffs[2])
+func Sequence(coeffs [][]float64, polyLow, polyHigh float64) <-chan []float64 {
+	ch := make(chan []float64)
+	coeff := coefficients(coeffs[0], coeffs[1], coeffs[2])
 
 	if polyHigh < polyLow {
 		log.Fatal("Invalid argument: polyHigh should be less than polyLow")
 	}
 
 	go func() {
-		defer close(res)
-		for coeff := range ch {
-			for x := polyLow; x < polyHigh; x++ {
-				res <- Solve(coeff, x)
+		defer close(ch)
+
+		count := int(polyHigh-polyLow) + 1
+		for c := range coeff {
+			i := 0
+			res := make([]float64, count)
+			for x := polyLow; x <= polyHigh; x++ {
+				res[i] = Solve(c, x)
+				i++
 			}
+
+			ch <- res
 		}
 	}()
 
-	return res
+	return ch
 }
 
 // coefficients returns a channel that returns all possible combinations of

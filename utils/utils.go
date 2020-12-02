@@ -1,19 +1,5 @@
 package utils
 
-func Equal(a, b []float64) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
 // Reverse reverses the elements of a float64 slice by swapping elements in place
 func Reverse(s []float64) {
 	j := len(s) - 1

@@ -1,6 +1,6 @@
 package sequence
 
-type Generator func(coeffs [][]float64, rangeLow, rangeHigh float64) <-chan float64
+type Generator func(coeffs [][]float64, rangeLow, rangeHigh float64) <-chan []float64
 
 type Config struct {
 	Generator Generator

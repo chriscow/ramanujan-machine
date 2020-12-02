@@ -10,7 +10,7 @@ endif
 APPS = generator
 all: $(APPS)
 
-$(BLDDIR)/gateway: $(wildcard apps/generator/*.go)
+$(BLDDIR)/generator: $(wildcard apps/generator/*.go)
 
 $(BLDDIR)/%:
 	@mkdir -p $(dir $@)
@@ -20,3 +20,6 @@ $(APPS): %: $(BLDDIR)/%
 
 clean:
 	rm -fr $(BLDDIR)
+
+test:
+	go test ./...

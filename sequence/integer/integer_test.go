@@ -2,7 +2,7 @@ package integer
 
 import (
 	"ramanujan/algorithm/contfrac"
-	"ramanujan/utils"
+	"reflect"
 	"testing"
 )
 
@@ -27,7 +27,7 @@ func TestIntSeq(t *testing.T) {
 
 	i := 0
 	for seq := range Sequence(digits, length, repeat, prefix, 1) {
-		if !utils.Equal(seq, comp[i]) {
+		if !reflect.DeepEqual(seq, comp[i]) {
 			t.Log("expected sequences to be the same")
 			t.Log(seq, comp[i])
 			t.Fail()
@@ -47,7 +47,7 @@ func TestCFSeq(t *testing.T) {
 	i := 0
 	for seq := range Sequence(digits, count, repeat, prefix, 1) {
 		if i == 1 {
-			if !utils.Equal(seq, comp) {
+			if !reflect.DeepEqual(seq, comp) {
 				t.Log("expected second sequence incorrect")
 				t.Log("expected:", comp)
 				t.Log("got:", seq)
