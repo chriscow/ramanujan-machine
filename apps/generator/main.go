@@ -9,12 +9,14 @@ type Algorithm interface {
 	Calc(a, b []float64) float64
 }
 
-type Generator interface {
-	Generate(coeffs [][]float64, rangeLow, rangeHigh float64) <-chan float64
-}
+// type Generator interface {
+// 	Generate(coeffs [][]float64, rangeLow, rangeHigh float64) <-chan float64
+// }
+
+type SeqenceGenerator func(coeffs [][]float64, rangeLow, rangeHigh float64) <-chan float64
 
 type Sequence struct {
-	generator Generator
+	generator SeqenceGenerator
 	coeff     [][]float64 // [[a-range] [b-range] [c-range]]
 	rangeLow  float64
 	rangeHigh float64

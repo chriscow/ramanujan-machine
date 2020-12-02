@@ -1,4 +1,4 @@
-package algo
+package sequence
 
 import (
 	"log"
@@ -7,11 +7,11 @@ import (
 
 // PolynomialSequence implements Generator interface to create a sequence of
 // numbers from solving polynomials
-type PolynomialSequence struct{}
+// type PolynomialSequence struct{}
 
-// Generate calculates the sequence of all polynomial results using the coefficiant
+// Polynomial calculates the sequence of all polynomial results using the coefficiant
 // ranges passed in and the values in the range from polyRange[0] to polyRange[1]
-func (p PolynomialSequence) Generate(coeffs [][]float64, polyLow, polyHigh float64) <-chan float64 {
+func Polynomial(coeffs [][]float64, polyLow, polyHigh float64) <-chan float64 {
 	res := make(chan float64)
 	ch := coefficients(coeffs[0], coeffs[1], coeffs[2])
 
