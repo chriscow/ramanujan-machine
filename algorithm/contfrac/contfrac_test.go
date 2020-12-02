@@ -16,7 +16,12 @@ func TestCFPhi(t *testing.T) {
 		b[i] = poly.Solve(coeff, float64(i))
 	}
 
-	res := Solve(a, b)
+	res, err := Solve(a, b)
+	if err != nil {
+		t.Log("continued fraction phi-1", err)
+		t.Fail()
+	}
+
 	if res != math.Phi {
 		t.Log("expected", res, "==", math.Phi)
 		t.Fail()
@@ -29,7 +34,12 @@ func TestCFPhi2(t *testing.T) {
 		seq[i] = 1
 	}
 
-	res := Solve(seq, nil)
+	res, err := Solve(seq, nil)
+	if err != nil {
+		t.Log("continued fraction phi-2", err)
+		t.Fail()
+	}
+
 	if res != math.Phi {
 		t.Log("expected", res, "==", math.Phi)
 		t.Fail()
@@ -51,7 +61,12 @@ func TestCFEuler(t *testing.T) {
 	log.Println(aSeq[:5])
 	log.Println(bSeq[:5])
 
-	res := Solve(aSeq, bSeq)
+	res, err := Solve(aSeq, bSeq)
+	if err != nil {
+		t.Log("continued fraction e #1", err)
+		t.Fail()
+	}
+
 	if res != math.E {
 		t.Log("expected", res, "==", math.E)
 		t.Fail()
@@ -73,7 +88,12 @@ func TestCFEuler2(t *testing.T) {
 	log.Println(aSeq[:5])
 	log.Println(bSeq[:5])
 
-	res := Solve(aSeq, bSeq)
+	res, err := Solve(aSeq, bSeq)
+	if err != nil {
+		t.Log("continued fraction e #2", err)
+		t.Fail()
+	}
+
 	if res != math.E {
 		t.Log("expected", res, "==", math.E)
 		t.Fail()

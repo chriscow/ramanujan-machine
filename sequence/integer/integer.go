@@ -28,14 +28,17 @@ import "ramanujan/utils"
 // 	(3, 1, 2, 1, 2, 1, 2, 1, 2) << ---
 // 	(3, 2, 1, 2, 1, 2, 1, 2, 1)
 // 	(3, 2, 2, 2, 2, 2, 2, 2, 2)
-func Sequence(digits []int, count, repeat int, prefix []int, prcount int) <-chan []int {
-	ch := make(chan []int)
+func Sequence(digits []int, count, repeat int, prefix []int, prcount int) <-chan []float64 {
+	ch := make(chan []float64)
 
 	go func() {
-		res := make([]int, 0)
+		defer close(ch)
+
 		for pfx := range utils.Product(prefix, prcount) {
-			res = append(res, pfx...)
 			for pattern := range utils.Product(digits, count) {
+				// need a new slice each time since they are reference vals
+				res := make([]float64, 0, len(pfx)+count*repeat)
+				res = append(res, pfx...)
 				for i := 0; i < repeat; i++ {
 					res = append(res, pattern...)
 				}

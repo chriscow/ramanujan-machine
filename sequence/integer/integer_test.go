@@ -1,27 +1,71 @@
 package integer
 
-import "testing"
+import (
+	"ramanujan/algorithm/contfrac"
+	"ramanujan/utils"
+	"testing"
+)
 
 func TestIntSeq(t *testing.T) {
-	// digits := []int{1,2,3}
-	// length := 2
-	// repeat := 4
+	digits := []int{1, 2, 3}
+	length := 2
+	repeat := 4
 
-	// prefix := []int{3}
+	prefix := []int{3}
 
-	// comp := make([][]int)
+	comp := make([][]float64, 9)
 
-	// comp[0] := []int{3, 1, 1, 1, 1, 1, 1, 1, 1}
-	// [3, 1, 2, 1, 2, 1, 2, 1, 2],
-	// [3, 1, 3, 1, 3, 1, 3, 1, 3],
-	// [3, 2, 1, 2, 1, 2, 1, 2, 1],
-	// [3, 2, 2, 2, 2, 2, 2, 2, 2],
-	// [3, 2, 3, 2, 3, 2, 3, 2, 3],
-	// [3, 3, 1, 3, 1, 3, 1, 3, 1],
-	// [3, 3, 2, 3, 2, 3, 2, 3, 2],
-	// [3, 3, 3, 3, 3, 3, 3, 3, 3]
+	comp[0] = []float64{3, 1, 1, 1, 1, 1, 1, 1, 1}
+	comp[1] = []float64{3, 1, 2, 1, 2, 1, 2, 1, 2}
+	comp[2] = []float64{3, 1, 3, 1, 3, 1, 3, 1, 3}
+	comp[3] = []float64{3, 2, 1, 2, 1, 2, 1, 2, 1}
+	comp[4] = []float64{3, 2, 2, 2, 2, 2, 2, 2, 2}
+	comp[5] = []float64{3, 2, 3, 2, 3, 2, 3, 2, 3}
+	comp[6] = []float64{3, 3, 1, 3, 1, 3, 1, 3, 1}
+	comp[7] = []float64{3, 3, 2, 3, 2, 3, 2, 3, 2}
+	comp[8] = []float64{3, 3, 3, 3, 3, 3, 3, 3, 3}
 
-	// for seq := Sequence(digits, length, repeat, prefix, 1) {
+	i := 0
+	for seq := range Sequence(digits, length, repeat, prefix, 1) {
+		if !utils.Equal(seq, comp[i]) {
+			t.Log("expected sequences to be the same")
+			t.Log(seq, comp[i])
+			t.Fail()
+		}
+		i++
+	}
+}
 
-	// }
+func TestCFSeq(t *testing.T) {
+	digits := []int{1, 2}
+	count := 2
+	repeat := 200
+	prefix := []int{1}
+
+	comp := []float64{3, 1, 2, 1, 2, 1, 2, 1, 2}
+
+	i := 0
+	for seq := range Sequence(digits, count, repeat, prefix, 1) {
+		if i == 1 {
+			if !utils.Equal(seq, comp) {
+				t.Log("expected second sequence incorrect")
+				t.Log("expected:", comp)
+				t.Log("got:", seq)
+				t.Fail()
+			}
+
+			res, err := contfrac.Solve(seq, nil)
+			if err != nil {
+				t.Log("continued fraction", err)
+				t.Fail()
+			}
+
+			if res != 3 {
+				t.Log("expected continued fraction == 3 but got", res)
+				t.Fail()
+			}
+
+			return
+		}
+	}
 }

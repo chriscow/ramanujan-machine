@@ -1,6 +1,18 @@
 package utils
 
-import "fmt"
+func Equal(a, b []float64) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
 
 // Reverse reverses the elements of a float64 slice by swapping elements in place
 func Reverse(s []float64) {
@@ -11,26 +23,20 @@ func Reverse(s []float64) {
 	}
 }
 
-func Product(digits []int, count int) <-chan []int {
-	ch := make(chan []int)
+func Product(digits []int, count int) <-chan []float64 {
+	ch := make(chan []float64)
 	ix := make([]int, count)
 
 	go func() {
 		defer close(ch)
 
-		pos := count - 1
 		for {
-			res := make([]int, count)
-
-			if pos < 0 {
-				return
-			}
+			res := make([]float64, count)
 
 			for i := 0; i < count; i++ {
-				res[i] = digits[ix[i]]
+				res[i] = float64(digits[ix[i]])
 			}
 
-			fmt.Println("sending", res, ix)
 			ch <- res
 
 			done := true

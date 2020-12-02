@@ -13,7 +13,12 @@ func TestRationalE(t *testing.T) {
 	a := poly.Solve(coeffA, math.E)
 	b := poly.Solve(coeffB, math.E)
 
-	res := Solve(a, b)
+	res, err := Solve(a, b)
+	if err != nil {
+		t.Log("rational function e", err)
+		t.Fail()
+	}
+
 	if res != math.E {
 		t.Log("expected", res, "==", math.E)
 		t.Fail()
