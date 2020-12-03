@@ -1,4 +1,7 @@
 # The Ramanujan Machine
+
+**NOTE: This is being actively developed and not ready for use.** I'll remove this note once its ready to try but feel free to poke around.
+
 This is an implementation of the [Ramanujan Machine](http://www.ramanujanmachine.com/) ideas as described in the paper:
 
 > [The Ramanujan Machine: Automatically Generated Conjectures on Fundamental Constants](https://arxiv.org/pdf/1907.00205.pdf)
