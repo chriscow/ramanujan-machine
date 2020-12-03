@@ -7,12 +7,6 @@ import (
 )
 
 func TestIntSeq(t *testing.T) {
-	digits := []int{1, 2, 3}
-	length := 2
-	repeat := 4
-
-	prefix := []int{3}
-
 	comp := make([][]float64, 9)
 
 	comp[0] = []float64{3, 1, 1, 1, 1, 1, 1, 1, 1}
@@ -26,7 +20,15 @@ func TestIntSeq(t *testing.T) {
 	comp[8] = []float64{3, 3, 3, 3, 3, 3, 3, 3, 3}
 
 	i := 0
-	for seq := range Sequence(digits, length, repeat, prefix, 1) {
+	args := SequenceArgs{
+		Digits:   []int{1, 2, 3},
+		Count:    2,
+		Repeat:   4,
+		Prefix:   []int{3},
+		PfxCount: 1,
+	}
+
+	for seq := range Sequence(args) {
 		if !reflect.DeepEqual(seq, comp[i]) {
 			t.Log("expected sequences to be the same")
 			t.Log(seq, comp[i])
@@ -37,15 +39,18 @@ func TestIntSeq(t *testing.T) {
 }
 
 func TestCFSeq(t *testing.T) {
-	digits := []int{1, 2}
-	count := 2
-	repeat := 200
-	prefix := []int{1}
+	args := SequenceArgs{
+		Digits:   []int{1, 2},
+		Count:    2,
+		Repeat:   200,
+		Prefix:   []int{1},
+		PfxCount: 1,
+	}
 
 	comp := []float64{3, 1, 2, 1, 2, 1, 2, 1, 2}
 
 	i := 0
-	for seq := range Sequence(digits, count, repeat, prefix, 1) {
+	for seq := range Sequence(args) {
 		if i == 1 {
 			if !reflect.DeepEqual(seq, comp) {
 				t.Log("expected second sequence incorrect")

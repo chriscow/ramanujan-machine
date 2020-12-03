@@ -1,7 +1,6 @@
 package contfrac
 
 import (
-	"log"
 	"math"
 	poly "ramanujan/sequence/polynomial"
 	"testing"

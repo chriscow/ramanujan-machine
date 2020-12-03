@@ -55,3 +55,19 @@ func TestRamanNR(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestMismatchedLen(t *testing.T) {
+	a := []float64{1, 0, 0}
+	b := []float64{2, 1}
+	_, err := Solve(a, b)
+	if err == nil {
+		t.Log("expected error for mismatched array lengths")
+		t.Fail()
+	}
+
+	_, err = Solve(b, a)
+	if err == nil {
+		t.Log("expected error for mismatched array lengths")
+		t.Fail()
+	}
+}
