@@ -18,25 +18,47 @@ func Solve(coeffs []float64, x float64) float64 {
 	return sum
 }
 
-// Sequence calculates the sequence of all polynomial results using the coefficiant
-// ranges passed in and the values in the range from polyRange[0] to polyRange[1]
-// and returns them through a channel
-func Sequence(coeffs [][]float64, polyLow, polyHigh float64) <-chan []float64 {
-	ch := make(chan []float64)
-	coeff := coefficients(coeffs[0], coeffs[1], coeffs[2])
+// Args supports (de)serialization of polynomial sequence arguments to an arguments file
+type Args struct {
+	A     []float64
+	B     []float64
+	C     []float64
+	From  float64
+	To    float64
+	Range []float64
+}
 
-	if polyHigh < polyLow {
+// Sequence calculates the sequence of all polynomial results using the coefficiant
+// ranges passed in and the values in the range Args.From -> Args.To
+// and returns them through a channel
+func Sequence(tmp interface{}) <-chan []float64 {
+	args := tmp.(Args)
+	ch := make(chan []float64)
+
+	coeff := coefficients(args.A, args.B, args.C)
+
+	if args.To < args.From {
 		log.Fatal("Invalid argument: polyHigh should be less than polyLow")
+	}
+
+	if args.Range == nil {
+		// If specific values were not provided in Range, we generate them
+		// going from From to To inclusive incrementing by 1
+		count := int(args.To - args.From + 1)
+		args.Range = make([]float64, count)
+		i := 0
+		for val := args.From; val <= args.To; val++ {
+			args.Range[i] = val
+		}
 	}
 
 	go func() {
 		defer close(ch)
 
-		count := int(polyHigh-polyLow) + 1
 		for c := range coeff {
 			i := 0
-			res := make([]float64, count)
-			for x := polyLow; x <= polyHigh; x++ {
+			res := make([]float64, len(args.Range))
+			for _, x := range args.Range {
 				res[i] = Solve(c, x)
 				i++
 			}

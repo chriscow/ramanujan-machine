@@ -34,26 +34,17 @@ func From(str string) (GeneratorType, error) {
 	}
 }
 
-func GetGenerator(t GeneratorType) (Generator, error) {
+// Get returns a concrete generator function from a GeneratorType
+func Get(t GeneratorType) (Generator, error) {
 	switch t {
 	case Polynomial:
 		return polynomial.Sequence, nil
 	case Integer:
 		return integer.Sequence, nil
 	default:
-		return nil, errors.New(fmt.Sprint("unknown type:", t.String()))
+		return nil, fmt.Errorf("unknown type: %s", t.String())
 	}
 }
 
-type GeneratorArgs interface{}
-
 // Generator function signature for creating sequences of numbers
-type Generator func(args GeneratorArgs) <-chan []float64
-
-// Config structure for generators
-type Config struct {
-	Generator Generator
-	Coeff     [][]float64 // [[a-range] [b-range] [c-range]]
-	RangeLow  float64
-	RangeHigh float64
-}
+type Generator func(args interface{}) <-chan []float64

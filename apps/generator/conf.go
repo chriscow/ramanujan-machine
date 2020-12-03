@@ -1,23 +1,10 @@
 package main
 
 import (
-	"log"
 	algo "ramanujan/algorithm"
-	"ramanujan/algorithm/contfrac"
-	"ramanujan/algorithm/nestrad"
 	seq "ramanujan/sequence"
 	"ramanujan/sequence/polynomial"
-
-	"github.com/spf13/viper"
 )
-
-type sideConf struct {
-	algorithms []algo.Algorithm
-	postproc   bool
-	blacklist  []float64
-	aSeqs      []seq.Config
-	bSeqs      []seq.Config
-}
 
 const (
 	defaultArgs = "default-args.json"
@@ -25,8 +12,8 @@ const (
 )
 
 func checkEnv() error {
-	viper.SetEnvPrefix("raman")
-	viper.AutomaticEnv()
+	// viper.SetEnvPrefix("raman")
+	// viper.AutomaticEnv()
 
 	// TODO: verify required environment variables
 
@@ -35,192 +22,197 @@ func checkEnv() error {
 
 func loadArgs(argsFile string) error {
 
-	setDefaults()
+	// setDefaults()
 
-	viper.SetConfigFile(argsFile)
-	viper.AddConfigPath(".args")
-	viper.AddConfigPath(".")
+	// viper.SetConfigFile(argsFile)
+	// viper.AddConfigPath(".args")
+	// viper.AddConfigPath(".")
 
-	if err := viper.ReadInConfig(); err != nil {
-		// Config file not found; ignore and go with defaults
-		log.Println("[generator]", argsFile, "not found. using defaults")
-		viper.WriteConfigAs("./" + defaultArgs)
-	}
+	// if err := viper.ReadInConfig(); err != nil {
+	// 	// Config file not found; ignore and go with defaults
+	// 	log.Println("[generator]", argsFile, "not found. using defaults")
+	// 	viper.WriteConfigAs("./" + defaultArgs)
+	// }
 
 	return nil
 }
 
-func setDefaults() {
-	//
-	// Set default values if no argument file is passed.  Also used to
-	// create a basic argument file to start from.  These defaults generate
-	// a range to find both phi and e
-	//
-	// use string values for constants so we can get them at varying decimal
-	// precision at runtime, or read them from files
-	viper.SetDefault("constants", []string{"e", "phi"})
+//__[ Sample Configurations ]___________________________________________________
+//
+// The following functions will configure side configurations for interesting
+// results.  It will either find some well known constants, good for testing or
+// or they may define runs of a certain size for scale / load testing.
+//
+func tiny() (lhs, rhs SideConf) {
 
-	//__[ Left Hand Side ]______________________________________________________
-	//
-	// algorithms to calculate left hand side equation values
-	viper.SetDefault("lhs.algorithms", []algo.AlgoType{algo.Rational})
-	// run post processing calculations on resulting values from above
-	viper.SetDefault("lhs.run_postproc", false)
-	// ignore results that equal these values (you get a lot of them)
-	viper.SetDefault("lhs.black_list", []float64{-2, -1, 0, 1, 2})
-	// algorithms arguments that are generally sequences of numbers.
-	// algorithms take two sequences, a and b here.
-	//
-	// a-sequences
-	viper.SetDefault("lhs.a_sequences.generator", seq.Polynomial)
-	viper.SetDefault("lhs.a_sequences.arguments", [][]float64{
-		[]float64{0, 1},
-		[]float64{1, 2},
-		[]float64{0, 1},
-		nil,
-	})
-	//
-	// b-sequences
-	viper.SetDefault("lhs.b_sequences.generator", seq.Polynomial)
-	viper.SetDefault("lhs.b_sequences.arguments", [][]float64{
-		[]float64{1, 2},
-		[]float64{0, 1},
-		[]float64{0, 1},
-		nil,
-	})
+	// This is just enough configuration to find phi and e on the right side
+	// and configures the left side for the same
+	rhs = rhsFindsE()
+	lhs = lhsFindsConstants()
 
-	//__[ Right Hand Side ]______________________________________________________
-	//
-	// algorithms to calculate right hand side equation values
-	viper.SetDefault("rhs.algorithms", []algo.AlgoType{algo.ContinuedFraction})
-	// run post processing calculations on resulting values from above
-	viper.SetDefault("rhs.run_postproc", false)
-	// ignore results that equal these values (you get a lot of them)
-	viper.SetDefault("rhs.black_list", []float64{-2, -1, 0, 1, 2})
-	// algorithms arguments that are generally sequences of numbers.
-	// algorithms take two sequences, a and b here.
-	//
-	// a-sequences
-	viper.SetDefault("rhs.a_sequences.generator", seq.Polynomial)
-	viper.SetDefault("rhs.a_sequences.arguments", [][]float64{
-		[]float64{1, 4},
-		[]float64{0, 2},
-		[]float64{0, 1},
-		[]float64{0, 200},
-	})
-	//
-	// b-sequences
-	viper.SetDefault("rhs.b_sequences.generator", seq.Polynomial)
-	viper.SetDefault("rhs.b_sequences.arguments", [][]float64{
-		[]float64{0, 2},
-		[]float64{-1, 1},
-		[]float64{0, 1},
-		[]float64{0, 200},
-	})
+	return
+}
+
+func lhsFindsConstants() SideConf {
+	return SideConf{
+		Algorithms: []algo.AlgoType{algo.RationalFunc},
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+		ASeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial, // this simply does returns the const
+				Args: polynomial.Args{
+					A: []float64{0, 1}, // args are reversed!
+					B: []float64{1, 2}, // 0 + 1x + 0x^2 where x == the const
+					C: []float64{0, 1},
+				},
+			},
+		},
+		BSeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial,
+				Args: polynomial.Args{ // don't forget the args are reversed
+					A: []float64{1, 2},
+					B: []float64{0, 1}, // 1 + 0x + 0x^2
+					C: []float64{0, 1}, // A +  B + C
+				},
+			},
+		},
+	}
+}
+
+func rhsPhiandE() SideConf {
+	return SideConf{
+		Algorithms: []algo.AlgoType{algo.ContinuedFraction},
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+		ASeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial,
+				Args: polynomial.Args{
+					A:    []float64{1, 4},
+					B:    []float64{0, 2},
+					C:    []float64{0, 1},
+					From: 0,
+					To:   200,
+				},
+			},
+		},
+		BSeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial,
+				Args: polynomial.Args{
+					A:    []float64{0, 2},
+					B:    []float64{-1, 1},
+					C:    []float64{0, 1},
+					From: 0,
+					To:   200,
+				},
+			},
+		}, // BSeqs
+	} // SideConf
 }
 
 // Configuration that finds phi for both contined fraction and nested radical
-func findsPhiCFandNR() sideConf {
-	return sideConf{
-		algorithms: []algo.Algorithm{
-			contfrac.Solve, // continued fraction
-			nestrad.Solve,  // nested radical
+func rhsPhiCFandNR() SideConf {
+	return SideConf{
+		Algorithms: []algo.AlgoType{
+			algo.ContinuedFraction,
+			algo.NestedRadical,
 		},
-		postproc:  false,
-		blacklist: []float64{-2, -1, 0, 1, 2},
-		aSeqs: []seq.Config{
-			seq.Config{
-				Generator: polynomial.Sequence,
-				Coeff: [][]float64{
-					[]float64{1, 2},
-					[]float64{0, 1},
-					[]float64{0, 1},
+		PostProc: false,
+		Ignore:   []float64{-2, -1, 0, 1, 2},
+		ASeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial,
+				Args: polynomial.Args{
+					A:    []float64{1, 4},
+					B:    []float64{0, 2},
+					C:    []float64{0, 1},
+					From: 0,
+					To:   200,
 				},
-				RangeLow:  0,
-				RangeHigh: 200,
 			},
 		},
-		bSeqs: []seq.Config{
-			seq.Config{
-				Generator: polynomial.Sequence,
-				Coeff: [][]float64{
-					[]float64{1, 2},
-					[]float64{0, 1},
-					[]float64{0, 1},
+		BSeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial,
+				Args: polynomial.Args{
+					A:    []float64{0, 2},
+					B:    []float64{-1, 1},
+					C:    []float64{0, 1},
+					From: 0,
+					To:   200,
 				},
-				RangeLow:  0,
-				RangeHigh: 200,
 			},
 		},
 	}
 }
 
 // Configuration that finds e
-func findsE() sideConf {
-	return sideConf{
-		algorithms: []algo.Algorithm{
-			contfrac.Solve, // continued fraction
-		},
-		postproc:  false,
-		blacklist: []float64{-2, -1, 0, 1, 2},
-		aSeqs: []seq.Config{
-			seq.Config{
-				Generator: polynomial.Sequence,
-				Coeff: [][]float64{
-					[]float64{3, 4},
-					[]float64{1, 2},
-					[]float64{0, 1},
+func rhsFindsE() SideConf {
+	return SideConf{
+		Algorithms: []algo.AlgoType{algo.ContinuedFraction},
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+		ASeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial,
+				Args: polynomial.Args{
+					A:    []float64{3, 4},
+					B:    []float64{1, 2},
+					C:    []float64{0, 1},
+					From: 0,
+					To:   200,
 				},
-				RangeLow:  0,
-				RangeHigh: 200,
 			},
 		},
-		bSeqs: []seq.Config{
-			seq.Config{
-				Generator: polynomial.Sequence,
-				Coeff: [][]float64{
-					[]float64{0, 1},
-					[]float64{-1, 0},
-					[]float64{0, 1},
+		BSeqs: []SeqConfig{
+			SeqConfig{
+				Generator: seq.Polynomial,
+				Args: polynomial.Args{
+					A:    []float64{0, 1},
+					B:    []float64{-1, 0},
+					C:    []float64{0, 1},
+					From: 0,
+					To:   200,
 				},
-				RangeLow:  0,
-				RangeHigh: 200,
 			},
-		},
-	}
+		}, // BSeqs
+	} // SideConf
 }
 
 // Configuration that generates just enough range to find BOTH phi and e
-func findsEandPhi() sideConf {
-	return sideConf{
-		algorithms: []algo.Algorithm{
-			contfrac.Solve,
-		},
-		postproc:  false,
-		blacklist: []float64{-2, -1, 0, 1, 2},
-		aSeqs: []seq.Config{
-			seq.Config{
-				Generator: polynomial.Sequence,
-				Coeff: [][]float64{
-					[]float64{1, 4},
-					[]float64{0, 2},
-					[]float64{0, 1},
-				},
-				RangeLow:  0,
-				RangeHigh: 200,
-			},
-		},
-		bSeqs: []seq.Config{
-			seq.Config{
-				Generator: polynomial.Sequence,
-				Coeff: [][]float64{
-					[]float64{0, 2},
-					[]float64{-1, 1},
-					[]float64{0, 1},
-				},
-				RangeLow:  0,
-				RangeHigh: 200,
-			},
-		},
-	}
-}
+// func findsEandPhi() sideConf {
+// 	return sideConf{
+// 		algorithms: []algo.Algorithm{
+// 			contfrac.Solve,
+// 		},
+// 		postproc:  false,
+// 		blacklist: []float64{-2, -1, 0, 1, 2},
+// 		aSeqs: []seq.Config{
+// 			seq.Config{
+// 				Generator: polynomial.Sequence,
+// 				Coeff: [][]float64{
+// 					[]float64{1, 4},
+// 					[]float64{0, 2},
+// 					[]float64{0, 1},
+// 				},
+// 				RangeLow:  0,
+// 				RangeHigh: 200,
+// 			},
+// 		},
+// 		bSeqs: []seq.Config{
+// 			seq.Config{
+// 				Generator: polynomial.Sequence,
+// 				Coeff: [][]float64{
+// 					[]float64{0, 2},
+// 					[]float64{-1, 1},
+// 					[]float64{0, 1},
+// 				},
+// 				RangeLow:  0,
+// 				RangeHigh: 200,
+// 			},
+// 		},
+// 	}
+// }

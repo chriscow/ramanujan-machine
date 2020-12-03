@@ -2,6 +2,14 @@ package integer
 
 import "ramanujan/utils"
 
+// SequenceArgs supports (de)serialization of arguments to an arguments file
+type SequenceArgs struct {
+	Digits        []int
+	Count, Repeat int
+	Prefix        []int
+	PfxCount      int
+}
+
 // Sequence generates all possible integer sequences
 //
 // Arguments:
@@ -28,18 +36,20 @@ import "ramanujan/utils"
 // 	(3, 1, 2, 1, 2, 1, 2, 1, 2) << ---
 // 	(3, 2, 1, 2, 1, 2, 1, 2, 1)
 // 	(3, 2, 2, 2, 2, 2, 2, 2, 2)
-func Sequence(digits []interface{}, count, repeat int, prefix []interface{}, prcount int) <-chan []interface{} {
-	ch := make(chan []interface{})
+func Sequence(tmp interface{}) <-chan []float64 {
+	a := tmp.(SequenceArgs)
+
+	ch := make(chan []float64)
 
 	go func() {
 		defer close(ch)
 
-		for pfx := range utils.Product(prefix, prcount) {
-			for pattern := range utils.Product(digits, count) {
+		for pfx := range utils.Product(a.Prefix, a.PfxCount) {
+			for pattern := range utils.Product(a.Digits, a.Count) {
 				// need a new slice each time since they are reference vals
-				res := make([]interface{}, 0, len(pfx)+count*repeat)
+				res := make([]float64, 0, len(pfx)+a.Count*a.Repeat)
 				res = append(res, pfx...)
-				for i := 0; i < repeat; i++ {
+				for i := 0; i < a.Repeat; i++ {
 					res = append(res, pattern...)
 				}
 
