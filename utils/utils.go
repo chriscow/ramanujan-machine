@@ -1,7 +1,7 @@
 package utils
 
 // Reverse reverses the elements of a float64 slice by swapping elements in place
-func Reverse(s []float64) {
+func Reverse(s []interface{}) {
 	j := len(s) - 1
 	for i := 0; i < j; i++ {
 		s[i], s[j] = s[j], s[i]
@@ -9,18 +9,18 @@ func Reverse(s []float64) {
 	}
 }
 
-func Product(digits []int, count int) <-chan []float64 {
-	ch := make(chan []float64)
+func Product(digits []interface{}, count int) <-chan []interface{} {
+	ch := make(chan []interface{})
 	ix := make([]int, count)
 
 	go func() {
 		defer close(ch)
 
 		for {
-			res := make([]float64, count)
+			res := make([]interface{}, count)
 
 			for i := 0; i < count; i++ {
-				res[i] = float64(digits[ix[i]])
+				res[i] = digits[ix[i]]
 			}
 
 			ch <- res
