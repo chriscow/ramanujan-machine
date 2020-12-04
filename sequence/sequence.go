@@ -18,6 +18,9 @@ const (
 	Integer
 )
 
+// GeneratorTypes is a convenience array of all GeneratorType values
+var GeneratorTypes = []GeneratorType{Polynomial, Integer}
+
 func (g GeneratorType) String() string {
 	return [...]string{"polynomial", "integer"}[g]
 }

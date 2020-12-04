@@ -19,6 +19,10 @@ const (
 	RationalFunc
 )
 
+// AlgoTypes is a convenience array for enumerating all algorithm value types
+var AlgoTypes = []AlgoType{ContinuedFraction, NestedRadical, RationalFunc}
+
+// String
 func (a AlgoType) String() string {
 	return [...]string{"continued_fraction", "nested_radical", "rational_func"}[a]
 }

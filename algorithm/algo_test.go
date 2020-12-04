@@ -6,7 +6,7 @@ import (
 )
 
 func TestString(t *testing.T) {
-	for i := ContinuedFraction; i < RationalFunc+1; i++ {
+	for _, i := range AlgoTypes {
 		switch i {
 		case ContinuedFraction:
 			if i.String() != "continued_fraction" {
