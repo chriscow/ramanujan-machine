@@ -30,3 +30,6 @@ Simply run `make all` to build all the binaries and copy them somewhere on your 
 `go test ./...`
 
 ### Running
+
+### Attribution
+Social image "Raspberry Pi" by craigmdennis is marked under CC0 1.0. To view the terms, visit https://creativecommons.org/licenses/cc0/1.0/
