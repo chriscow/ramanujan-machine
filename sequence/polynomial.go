@@ -1,4 +1,4 @@
-package polynomial
+package sequence
 
 import (
 	"log"
@@ -18,8 +18,8 @@ func Solve(coeffs []float64, x float64) float64 {
 	return sum
 }
 
-// Args supports (de)serialization of polynomial sequence arguments to an arguments file
-type Args struct {
+// Polynomial supports (de)serialization of polynomial sequence arguments to an arguments file
+type Polynomial struct {
 	A     []float64
 	B     []float64
 	C     []float64
@@ -28,27 +28,26 @@ type Args struct {
 	Range []float64
 }
 
-// Sequence calculates the sequence of all polynomial results using the coefficiant
-// ranges passed in and the values in the range Args.From -> Args.To
+// Generate calculates the sequence of all polynomial results using the coefficiant
+// ranges passed in and the values in the range s.From -> s.To
 // and returns them through a channel
-func Sequence(tmp interface{}) <-chan []float64 {
-	args := tmp.(Args)
+func (s Polynomial) Generate() <-chan []float64 {
 	ch := make(chan []float64)
 
-	coeff := coefficients(args.A, args.B, args.C)
+	coeff := coefficients(s.A, s.B, s.C)
 
-	if args.To < args.From {
+	if s.To < s.From {
 		log.Fatal("Invalid argument: polyHigh should be less than polyLow")
 	}
 
-	if args.Range == nil {
+	if s.Range == nil {
 		// If specific values were not provided in Range, we generate them
 		// going from From to To inclusive incrementing by 1
-		count := int(args.To - args.From + 1)
-		args.Range = make([]float64, count)
+		count := int(s.To - s.From + 1)
+		s.Range = make([]float64, count)
 		i := 0
-		for val := args.From; val <= args.To; val++ {
-			args.Range[i] = val
+		for val := s.From; val <= s.To; val++ {
+			s.Range[i] = val
 		}
 	}
 
@@ -57,8 +56,8 @@ func Sequence(tmp interface{}) <-chan []float64 {
 
 		for c := range coeff {
 			i := 0
-			res := make([]float64, len(args.Range))
-			for _, x := range args.Range {
+			res := make([]float64, len(s.Range))
+			for _, x := range s.Range {
 				res[i] = Solve(c, x)
 				i++
 			}

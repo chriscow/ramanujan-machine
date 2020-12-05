@@ -1,10 +1,14 @@
-package contfrac
+package algorithm
 
 import (
 	"fmt"
 	"math"
 	"ramanujan/utils"
 )
+
+type ContinuedFraction struct {
+	A, B []float64
+}
 
 // Solve calculates the continued fraction using the sequence of elements as
 // the numerators and denominators.
@@ -23,10 +27,10 @@ import (
 // otherwise the result is
 //
 // a[0] + b[0] / (a[1] + b[1] / (a[2] + b[2] / a[3] ...))
-func Solve(a, b []float64) (float64, error) {
+func (cf ContinuedFraction) Solve() (float64, error) {
 	var res float64
 	res = 1
-
+	a, b := cf.A, cf.B
 	if b == nil {
 		b = make([]float64, len(a))
 		for i := 0; i < len(a); i++ {

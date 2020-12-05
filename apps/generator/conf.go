@@ -2,8 +2,7 @@ package main
 
 import (
 	algo "ramanujan/algorithm"
-	seq "ramanujan/sequence"
-	"ramanujan/sequence/polynomial"
+	"ramanujan/sequence"
 )
 
 const (
@@ -55,13 +54,12 @@ func tiny() (lhs, rhs SideConf) {
 
 func lhsFindsConstants() SideConf {
 	return SideConf{
-		Algorithms: []algo.AlgoType{algo.RationalFunc},
+		Algorithms: []algo.Algorithm{algo.RationalFunc{}},
 		PostProc:   false,
 		Ignore:     []float64{-2, -1, 0, 1, 2},
 		ASeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial, // this simply does returns the const
-				Args: polynomial.Args{
+				Generator: sequence.Polynomial{
 					A: []float64{0, 1}, // args are reversed!
 					B: []float64{1, 2}, // 0 + 1x + 0x^2 where x == the const
 					C: []float64{0, 1},
@@ -70,8 +68,7 @@ func lhsFindsConstants() SideConf {
 		},
 		BSeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial,
-				Args: polynomial.Args{ // don't forget the args are reversed
+				Generator: sequence.Polynomial{ // don't forget the args are reversed
 					A: []float64{1, 2},
 					B: []float64{0, 1}, // 1 + 0x + 0x^2
 					C: []float64{0, 1}, // A +  B + C
@@ -83,13 +80,12 @@ func lhsFindsConstants() SideConf {
 
 func rhsPhiandE() SideConf {
 	return SideConf{
-		Algorithms: []algo.AlgoType{algo.ContinuedFraction},
+		Algorithms: []algo.Algorithm{algo.ContinuedFraction{}},
 		PostProc:   false,
 		Ignore:     []float64{-2, -1, 0, 1, 2},
 		ASeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial,
-				Args: polynomial.Args{
+				Generator: sequence.Polynomial{
 					A:    []float64{1, 4},
 					B:    []float64{0, 2},
 					C:    []float64{0, 1},
@@ -100,8 +96,7 @@ func rhsPhiandE() SideConf {
 		},
 		BSeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial,
-				Args: polynomial.Args{
+				Generator: sequence.Polynomial{
 					A:    []float64{0, 2},
 					B:    []float64{-1, 1},
 					C:    []float64{0, 1},
@@ -116,16 +111,15 @@ func rhsPhiandE() SideConf {
 // Configuration that finds phi for both contined fraction and nested radical
 func rhsPhiCFandNR() SideConf {
 	return SideConf{
-		Algorithms: []algo.AlgoType{
-			algo.ContinuedFraction,
-			algo.NestedRadical,
+		Algorithms: []algo.Algorithm{
+			algo.ContinuedFraction{},
+			algo.NestedRadical{},
 		},
 		PostProc: false,
 		Ignore:   []float64{-2, -1, 0, 1, 2},
 		ASeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial,
-				Args: polynomial.Args{
+				Generator: sequence.Polynomial{
 					A:    []float64{1, 4},
 					B:    []float64{0, 2},
 					C:    []float64{0, 1},
@@ -136,8 +130,7 @@ func rhsPhiCFandNR() SideConf {
 		},
 		BSeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial,
-				Args: polynomial.Args{
+				Generator: sequence.Polynomial{
 					A:    []float64{0, 2},
 					B:    []float64{-1, 1},
 					C:    []float64{0, 1},
@@ -152,13 +145,12 @@ func rhsPhiCFandNR() SideConf {
 // Configuration that finds e
 func rhsFindsE() SideConf {
 	return SideConf{
-		Algorithms: []algo.AlgoType{algo.ContinuedFraction},
+		Algorithms: []algo.Algorithm{algo.ContinuedFraction{}},
 		PostProc:   false,
 		Ignore:     []float64{-2, -1, 0, 1, 2},
 		ASeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial,
-				Args: polynomial.Args{
+				Generator: sequence.Polynomial{
 					A:    []float64{3, 4},
 					B:    []float64{1, 2},
 					C:    []float64{0, 1},
@@ -169,8 +161,7 @@ func rhsFindsE() SideConf {
 		},
 		BSeqs: []SeqConfig{
 			SeqConfig{
-				Generator: seq.Polynomial,
-				Args: polynomial.Args{
+				Generator: sequence.Polynomial{
 					A:    []float64{0, 1},
 					B:    []float64{-1, 0},
 					C:    []float64{0, 1},
@@ -192,7 +183,7 @@ func rhsFindsE() SideConf {
 // 		blacklist: []float64{-2, -1, 0, 1, 2},
 // 		aSeqs: []seq.Config{
 // 			seq.Config{
-// 				Generator: polynomial.Sequence,
+// 				Generator: sequence.Polynomial,
 // 				Coeff: [][]float64{
 // 					[]float64{1, 4},
 // 					[]float64{0, 2},
@@ -204,7 +195,7 @@ func rhsFindsE() SideConf {
 // 		},
 // 		bSeqs: []seq.Config{
 // 			seq.Config{
-// 				Generator: polynomial.Sequence,
+// 				Generator: sequence.Polynomial,
 // 				Coeff: [][]float64{
 // 					[]float64{0, 2},
 // 					[]float64{-1, 1},

@@ -1,4 +1,4 @@
-package rational
+package algorithm
 
 import (
 	"math"

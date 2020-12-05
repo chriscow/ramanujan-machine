@@ -1,4 +1,4 @@
-package nestrad
+package algorithm
 
 import (
 	"math"

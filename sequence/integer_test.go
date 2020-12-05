@@ -1,7 +1,7 @@
-package integer
+package sequence
 
 import (
-	"ramanujan/algorithm/contfrac"
+	"ramanujan/algorithm"
 	"reflect"
 	"testing"
 )
@@ -20,7 +20,7 @@ func TestIntSeq(t *testing.T) {
 	comp[8] = []float64{3, 3, 3, 3, 3, 3, 3, 3, 3}
 
 	i := 0
-	args := SequenceArgs{
+	seq := Integer{
 		Digits:   []int{1, 2, 3},
 		Count:    2,
 		Repeat:   4,
@@ -28,7 +28,7 @@ func TestIntSeq(t *testing.T) {
 		PfxCount: 1,
 	}
 
-	for seq := range Sequence(args) {
+	for seq := range seq.Generate(args) {
 		if !reflect.DeepEqual(seq, comp[i]) {
 			t.Log("expected sequences to be the same")
 			t.Log(seq, comp[i])
@@ -39,7 +39,7 @@ func TestIntSeq(t *testing.T) {
 }
 
 func TestCFSeq(t *testing.T) {
-	args := SequenceArgs{
+	iseq := Integer{
 		Digits:   []int{1, 2},
 		Count:    2,
 		Repeat:   200,
@@ -50,7 +50,7 @@ func TestCFSeq(t *testing.T) {
 	comp := []float64{3, 1, 2, 1, 2, 1, 2, 1, 2}
 
 	i := 0
-	for seq := range Sequence(args) {
+	for seq := range iseq.Generate() {
 		if i == 1 {
 			if !reflect.DeepEqual(seq, comp) {
 				t.Log("expected second sequence incorrect")
@@ -59,7 +59,8 @@ func TestCFSeq(t *testing.T) {
 				t.Fail()
 			}
 
-			res, err := contfrac.Solve(seq, nil)
+			cf := algorithm.ContinuedFraction{}
+			res, err := cf.Solve(seq, nil)
 			if err != nil {
 				t.Log("continued fraction", err)
 				t.Fail()

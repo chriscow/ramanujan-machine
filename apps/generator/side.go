@@ -9,7 +9,7 @@ import (
 // SideConf contains all the information to generate a series of calculated values
 // from a list of algorithms
 type SideConf struct {
-	Algorithms []algo.AlgoType
+	Algorithms []algo.Algorithm
 	PostProc   bool
 	Ignore     []float64
 	ASeqs      []SeqConfig
@@ -18,8 +18,7 @@ type SideConf struct {
 
 // SeqConfig contains the sequence generator type and its arguments
 type SeqConfig struct {
-	Generator sequence.GeneratorType
-	Args      interface{}
+	Generator sequence.Generator
 }
 
 // Solve takes an equation's side configuration (recall that an equation has a
@@ -39,31 +38,15 @@ func (conf SideConf) Solve() <-chan float64 {
 	go func() {
 		defer close(ch)
 
-		for _, algType := range conf.Algorithms {
+		for _, algFunc := range conf.Algorithms {
 			for _, aConf := range conf.ASeqs {
 				for _, bConf := range conf.BSeqs {
 
-					aGenFunc, err := sequence.Get(aConf.Generator)
-					if err != nil {
-						log.Fatal("get a-sequence generator:", err)
-					}
+					for aseq := range aConf.Generator.Generate() {
+						for bseq := range bConf.Generator.Generate() {
 
-					bGenFunc, err := sequence.Get(bConf.Generator)
-					if err != nil {
-						log.Fatal("get b-sequence generator:", err)
-					}
+							val, err := algFunc.Solve()
 
-					algFunc, err := algo.Get(algType)
-					if err != nil {
-						log.Fatal("get algorithm:", err)
-					}
-
-					for aseq := range aGenFunc(aConf.Args) {
-						for bseq := range bGenFunc(bConf.Args) {
-							a := aseq
-							b := bseq
-
-							val, err := algFunc(a, b)
 							if err != nil {
 								log.Fatal("error calling algorithm", err)
 							}

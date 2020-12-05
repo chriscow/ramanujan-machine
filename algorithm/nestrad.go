@@ -1,10 +1,14 @@
-package nestrad
+package algorithm
 
 import (
 	"fmt"
 	"math"
 	"ramanujan/utils"
 )
+
+type NestedRadical struct {
+	A, B []float64
+}
 
 // Solve calculates a value by using the sequence of values passed in a
 // nested radical of the form:
@@ -14,9 +18,11 @@ import (
 // See: https://www.johndcook.com/blog/2013/09/13/ramanujans-nested-radical/
 //
 // arguments a and b are expected to be the same length
-func Solve(a, b []float64) (float64, error) {
+func (nr NestedRadical) Solve() (float64, error) {
 	var root float64
 	root = 1
+
+	a, b := nr.A, nr.B
 
 	if len(a) != len(b) {
 		return math.NaN(), fmt.Errorf("invalid argument: arrays must be same length")

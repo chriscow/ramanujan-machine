@@ -1,4 +1,4 @@
-package contfrac
+package algorithm
 
 import (
 	"math"
