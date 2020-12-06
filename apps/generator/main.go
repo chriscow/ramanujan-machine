@@ -11,8 +11,8 @@ import (
 
 type appConf struct {
 	Constants []float64
-	LHS       SideConf
-	RHS       SideConf
+	LHS       Side
+	RHS       Side
 }
 
 func (c appConf) Save() {
@@ -38,9 +38,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// the tiny config is just big enough to find e on both sides
 	lhs, rhs := tiny()
 	conf := appConf{
-		Constants: []float64{math.E, math.Phi},
+		Constants: []float64{math.E},
 		LHS:       lhs,
 		RHS:       rhs,
 	}

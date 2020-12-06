@@ -1,6 +1,6 @@
 package algorithm
 
-// Algorithm function signature
-type Algorithm interface {
-	Solve() (float64, error)
+// Solver function signature
+type Solver interface {
+	Solve() <-chan float64
 }

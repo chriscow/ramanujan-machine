@@ -50,7 +50,7 @@ func TestCFSeq(t *testing.T) {
 	comp := []float64{3, 1, 2, 1, 2, 1, 2, 1, 2}
 
 	i := 0
-	for seq := range iseq.Generate() {
+	for seq := range iseq.Next() {
 		if i == 1 {
 			if !reflect.DeepEqual(seq, comp) {
 				t.Log("expected second sequence incorrect")

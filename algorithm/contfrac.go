@@ -2,12 +2,15 @@ package algorithm
 
 import (
 	"fmt"
+	"log"
 	"math"
+	"ramanujan/sequence"
 	"ramanujan/utils"
 )
 
+// ContinuedFraction struct to support serialization of generator config
 type ContinuedFraction struct {
-	A, B []float64
+	A, B sequence.Generator
 }
 
 // Solve calculates the continued fraction using the sequence of elements as
@@ -27,16 +30,37 @@ type ContinuedFraction struct {
 // otherwise the result is
 //
 // a[0] + b[0] / (a[1] + b[1] / (a[2] + b[2] / a[3] ...))
-func (cf ContinuedFraction) Solve() (float64, error) {
+func (cf ContinuedFraction) Solve() <-chan float64 {
+	ch := make(chan float64)
+
+	go func() {
+		defer close(ch)
+		for a := range cf.A.Next() {
+			for b := range cf.B.Next() {
+				res, err := cf.solve(a, b)
+				if err != nil {
+					log.Fatal("continued fraction misconfigured", err)
+				}
+				ch <- res
+			}
+		}
+	}()
+
+	return ch
+}
+
+func (cf ContinuedFraction) solve(a, b []float64) (float64, error) {
 	var res float64
 	res = 1
-	a, b := cf.A, cf.B
-	if b == nil {
-		b = make([]float64, len(a))
-		for i := 0; i < len(a); i++ {
-			b[i] = 1
-		}
-	} else if len(a) == len(b) {
+
+	// if b == nil {
+	// 	b = make([]float64, len(a))
+	// 	for i := 0; i < len(a); i++ {
+	// 		b[i] = 1
+	// 	}
+	// }
+
+	if len(a) == len(b) {
 		if b[0] == 0 {
 			b = b[1:]
 		}

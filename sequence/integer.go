@@ -36,7 +36,7 @@ type Integer struct {
 // 	(3, 1, 2, 1, 2, 1, 2, 1, 2) << ---
 // 	(3, 2, 1, 2, 1, 2, 1, 2, 1)
 // 	(3, 2, 2, 2, 2, 2, 2, 2, 2)
-func (s Integer) Generate() <-chan []float64 {
+func (s Integer) Next() <-chan []float64 {
 	ch := make(chan []float64)
 
 	go func() {

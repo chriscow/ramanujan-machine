@@ -28,10 +28,10 @@ type Polynomial struct {
 	Range []float64
 }
 
-// Generate calculates the sequence of all polynomial results using the coefficiant
+// Next calculates the sequence of all polynomial results using the coefficiant
 // ranges passed in and the values in the range s.From -> s.To
 // and returns them through a channel
-func (s Polynomial) Generate() <-chan []float64 {
+func (s Polynomial) Next() <-chan []float64 {
 	ch := make(chan []float64)
 
 	coeff := coefficients(s.A, s.B, s.C)
@@ -43,11 +43,12 @@ func (s Polynomial) Generate() <-chan []float64 {
 	if s.Range == nil {
 		// If specific values were not provided in Range, we generate them
 		// going from From to To inclusive incrementing by 1
-		count := int(s.To - s.From + 1)
+		count := int(s.To-s.From) + 1
 		s.Range = make([]float64, count)
 		i := 0
 		for val := s.From; val <= s.To; val++ {
 			s.Range[i] = val
+			i++
 		}
 	}
 

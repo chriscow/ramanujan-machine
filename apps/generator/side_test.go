@@ -5,7 +5,20 @@ import (
 	"testing"
 )
 
-func TestFindsPhiandE(t *testing.T) {
+func TestRHSFindsE(t *testing.T) {
+	side := rhsFindsE()
+
+	for val := range side.Solve() {
+		if val == math.E {
+			return
+		}
+	}
+
+	t.Log("Did not find e")
+	t.Fail()
+}
+
+func TestRHSFindsPhiandE(t *testing.T) {
 	conf := rhsPhiandE()
 
 	e := false
@@ -13,7 +26,7 @@ func TestFindsPhiandE(t *testing.T) {
 
 	// get each value computed by solve() and if it equals e or phi, set those
 	// flags.  If they both get set, we are done
-	for _, val := range solve(conf) {
+	for val := range conf.Solve() {
 		if val == math.E {
 			e = true
 		} else if val == math.Phi {
@@ -35,25 +48,12 @@ func TestFindsPhiandE(t *testing.T) {
 	t.Fail()
 }
 
-func TestFindsE(t *testing.T) {
-	conf := rhsFindsE()
-
-	for _, val := range solve(conf) {
-		if val == math.E {
-			return
-		}
-	}
-
-	t.Log("Did not find e")
-	t.Fail()
-}
-
 // finds the value phi using both the continued fraction and nested radical
-func TestPhiCFandNR(t *testing.T) {
+func TestRHSPhiCFandNR(t *testing.T) {
 	conf := rhsPhiCFandNR()
 
 	count := 0
-	for _, val := range solve(conf) {
+	for val := range conf.Solve() {
 		if val == math.Phi {
 			count++
 		}
