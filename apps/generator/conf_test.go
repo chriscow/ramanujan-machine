@@ -5,6 +5,19 @@ import (
 	"testing"
 )
 
+func TestLHSFindsConstants(t *testing.T) {
+	side := lhsFindsE()
+
+	for val := range side.Solve() {
+		if val == math.E {
+			return
+		}
+	}
+
+	t.Log("Did not find e")
+	t.Fail()
+}
+
 func TestRHSFindsE(t *testing.T) {
 	side := rhsFindsE()
 
