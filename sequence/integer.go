@@ -2,7 +2,7 @@ package sequence
 
 import "ramanujan/utils"
 
-// Sequence supports (de)serialization of arguments to an arguments file
+// Integer supports (de)serialization of arguments to an arguments file
 type Integer struct {
 	Digits        []int
 	Count, Repeat int
@@ -10,7 +10,7 @@ type Integer struct {
 	PfxCount      int
 }
 
-// Generate generates all possible integer sequences
+// Next generates all possible integer sequences
 //
 // Arguments:
 // 	digits - The digits to use to generate the primary part of the sequence

@@ -4,16 +4,17 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"math"
 	"os"
 	"path"
+	"runtime"
+
+	"golang.org/x/sync/semaphore"
 )
 
-type appConf struct {
-	Constants []float64
-	LHS       Side
-	RHS       Side
-}
+var (
+	maxWorkers = runtime.GOMAXPROCS(0)
+	sem        = semaphore.NewWeighted(int64(maxWorkers))
+)
 
 func (c appConf) Save() {
 	b, err := json.Marshal(c)
@@ -39,12 +40,7 @@ func main() {
 	}
 
 	// the tiny config is just big enough to find e on both sides
-	lhs, rhs := tiny()
-	conf := appConf{
-		Constants: []float64{math.E},
-		LHS:       lhs,
-		RHS:       rhs,
-	}
+	conf := tinyConf()
 
 	for v := range conf.LHS.Solve() {
 		log.Println(v)

@@ -1,27 +1,19 @@
 package main
 
 import (
+	"math"
+	"ramanujan/algorithm"
 	algo "ramanujan/algorithm"
 	"ramanujan/sequence"
-	"runtime"
-
-	"golang.org/x/sync/semaphore"
 )
 
-// Side contains all the information to generate a series of calculated values
+// side contains all the information to generate a series of calculated values
 // from a list of algorithms
-type Side struct {
+type side struct {
 	Algorithms []algo.Solver
 	PostProc   bool
 	Ignore     []float64
-	ASeqs      []sequence.Generator
-	BSeqs      []sequence.Generator
 }
-
-var (
-	maxWorkers = runtime.GOMAXPROCS(0)
-	sem        = semaphore.NewWeighted(int64(maxWorkers))
-)
 
 // Solve takes an equation's side configuration (recall that an equation has a
 // left and a right hand side) and loops over each algorithm that will calculate
@@ -34,7 +26,7 @@ var (
 // FINALLY, execute the algorithm with each sequence generated. Essentially this
 // is calculating the algorithm value with a brute force approach with every
 // possible set of values within the sequence range generated.
-func (conf Side) Solve() <-chan float64 {
+func (conf side) Solve() <-chan float64 {
 	ch := make(chan float64)
 
 	go func() {
@@ -60,4 +52,137 @@ func (conf Side) Solve() <-chan float64 {
 	}()
 
 	return ch
+}
+
+//__[ Sample Equation Sides ]___________________________________________________
+//
+// These sample side configurations are great for testing
+//
+func lhsFindsConstants(constants []float64) side {
+	ones := make([]float64, len(constants))
+	for i := range ones {
+		ones[i] = 1
+	}
+
+	a := sequence.Constant{Values: constants}
+	b := sequence.Constant{Values: ones}
+
+	rf := algorithm.RationalFunc{A: a, B: b}
+
+	solvers := []algorithm.Solver{rf}
+
+	return side{
+		Algorithms: solvers,
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+	}
+}
+
+func rhsPhiandE() side {
+	a := sequence.Polynomial{
+		A:    []float64{1, 4},
+		B:    []float64{0, 2},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	b := sequence.Polynomial{
+		A:    []float64{0, 2},
+		B:    []float64{-1, 1},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	cf := algorithm.ContinuedFraction{A: a, B: b}
+	solvers := []algorithm.Solver{cf}
+
+	return side{
+		Algorithms: solvers,
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+	}
+}
+
+// Configuration that finds phi for both contined fraction and nested radical
+func rhsPhiCFandNR() side {
+	a := sequence.Polynomial{
+		A:    []float64{1, 4},
+		B:    []float64{0, 2},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	b := sequence.Polynomial{
+		A:    []float64{0, 2},
+		B:    []float64{-1, 1},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	cf := algorithm.ContinuedFraction{A: a, B: b}
+	nr := algorithm.NestedRadical{A: a, B: b}
+	solvers := []algorithm.Solver{cf, nr}
+
+	return side{
+		Algorithms: solvers,
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+	}
+}
+
+// Configuration that finds e
+func rhsFindsE() side {
+	a := sequence.Polynomial{
+		A:    []float64{3, 4},
+		B:    []float64{1, 2},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	b := sequence.Polynomial{
+		A:    []float64{0, 1},
+		B:    []float64{-1, 0},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	cf := algorithm.ContinuedFraction{A: a, B: b}
+	solvers := []algorithm.Solver{cf}
+
+	return side{
+		Algorithms: solvers,
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+	}
+}
+
+func lhsFindsE() side {
+	a := sequence.Polynomial{
+		A:     []float64{0, 1},
+		B:     []float64{1, 2},
+		C:     []float64{0, 1},
+		Range: []float64{math.E},
+	}
+
+	b := sequence.Polynomial{
+		A:     []float64{1, 2},
+		B:     []float64{0, 1},
+		C:     []float64{0, 1},
+		Range: []float64{1},
+	}
+
+	rf := algorithm.RationalFunc{A: a, B: b}
+	solvers := []algorithm.Solver{rf}
+
+	return side{
+		Algorithms: solvers,
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+	}
 }

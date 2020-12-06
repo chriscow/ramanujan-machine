@@ -6,16 +6,24 @@ import (
 )
 
 func TestLHSFindsConstants(t *testing.T) {
-	side := lhsFindsE()
-
-	for val := range side.Solve() {
-		if val == math.E {
-			return
-		}
+	constants := []float64{math.E, math.Phi}
+	check := make(map[float64]bool)
+	for _, val := range constants {
+		check[val] = false
 	}
 
-	t.Log("Did not find e")
-	t.Fail()
+	side := lhsFindsConstants(constants)
+
+	for val := range side.Solve() {
+		check[val] = true
+	}
+
+	for k, v := range check {
+		if v != true {
+			t.Log("did not find", k)
+			t.Fail()
+		}
+	}
 }
 
 func TestRHSFindsE(t *testing.T) {
