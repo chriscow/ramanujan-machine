@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"ramanujan/algorithm"
 	algo "ramanujan/algorithm"
 	"ramanujan/sequence"
@@ -78,6 +77,34 @@ func lhsFindsConstants(constants []float64) side {
 	}
 }
 
+// Configuration that finds e
+func rhsFindsE() side {
+	a := sequence.Polynomial{
+		A:    []float64{3, 4},
+		B:    []float64{1, 2},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	b := sequence.Polynomial{
+		A:    []float64{0, 1},
+		B:    []float64{-1, 0},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
+
+	cf := algorithm.ContinuedFraction{A: a, B: b}
+	solvers := []algorithm.Solver{cf}
+
+	return side{
+		Algorithms: solvers,
+		PostProc:   false,
+		Ignore:     []float64{-2, -1, 0, 1, 2},
+	}
+}
+
 func rhsPhiandE() side {
 	a := sequence.Polynomial{
 		A:    []float64{1, 4},
@@ -134,51 +161,37 @@ func rhsPhiCFandNR() side {
 	}
 }
 
-// Configuration that finds e
-func rhsFindsE() side {
-	a := sequence.Polynomial{
-		A:    []float64{3, 4},
-		B:    []float64{1, 2},
+func rhsFindsSqrt3EandPhi() side {
+	a1 := sequence.Integer{
+		Digits:   []int{1, 2},
+		Count:    2,
+		Repeat:   100,
+		Prefix:   []int{1},
+		PfxCount: 1,
+	}
+
+	a2 := sequence.Polynomial{
+		A:    []float64{1, 4},
+		B:    []float64{0, 2},
 		C:    []float64{0, 1},
 		From: 0,
 		To:   200,
 	}
 
 	b := sequence.Polynomial{
-		A:    []float64{0, 1},
-		B:    []float64{-1, 0},
+		A:    []float64{0, 2},
+		B:    []float64{-1, 1},
 		C:    []float64{0, 1},
 		From: 0,
 		To:   200,
 	}
 
-	cf := algorithm.ContinuedFraction{A: a, B: b}
-	solvers := []algorithm.Solver{cf}
+	cf1 := algorithm.ContinuedFraction{A: a1, B: b}
+	cf2 := algorithm.ContinuedFraction{A: a2, B: b}
+	nr1 := algorithm.NestedRadical{A: a1, B: b}
+	nr2 := algorithm.NestedRadical{A: a2, B: b}
 
-	return side{
-		Algorithms: solvers,
-		PostProc:   false,
-		Ignore:     []float64{-2, -1, 0, 1, 2},
-	}
-}
-
-func lhsFindsE() side {
-	a := sequence.Polynomial{
-		A:     []float64{0, 1},
-		B:     []float64{1, 2},
-		C:     []float64{0, 1},
-		Range: []float64{math.E},
-	}
-
-	b := sequence.Polynomial{
-		A:     []float64{1, 2},
-		B:     []float64{0, 1},
-		C:     []float64{0, 1},
-		Range: []float64{1},
-	}
-
-	rf := algorithm.RationalFunc{A: a, B: b}
-	solvers := []algorithm.Solver{rf}
+	solvers := []algorithm.Solver{cf1, cf2, nr1, nr2}
 
 	return side{
 		Algorithms: solvers,
