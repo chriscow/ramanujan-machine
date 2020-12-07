@@ -5,6 +5,32 @@ import (
 	"testing"
 )
 
+func TestRHSFindsSqrt3EandPhi(t *testing.T) {
+	constants := []float64{math.E, math.Phi, math.Sqrt(3)}
+
+	check := make(map[float64]bool)
+	for _, val := range constants {
+		t.Log(val)
+		check[val] = false
+	}
+
+	side := rhsFindsSqrt3EandPhi()
+
+	for val := range side.Solve() {
+		// t.Log(val)
+		if _, ok := check[val]; ok {
+			check[val] = true
+		}
+	}
+
+	for k, v := range check {
+		if v != true {
+			t.Log("did not find", k)
+			t.Fail()
+		}
+	}
+}
+
 func TestLHSFindsConstants(t *testing.T) {
 	constants := []float64{math.E, math.Phi}
 	check := make(map[float64]bool)

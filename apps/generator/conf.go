@@ -40,11 +40,26 @@ func tinyConf() appConf {
 
 	// This is just enough configuration to e on the right side
 	// and configures the left side for the same
-	rhs := rhsFindsE()
 	lhs := lhsFindsConstants(constants)
+	rhs := rhsFindsE()
 
 	return appConf{
-		Constants: []float64{math.E},
+		Constants: constants,
+		LHS:       lhs,
+		RHS:       rhs,
+	}
+}
+
+func smallConf() appConf {
+	constants := []float64{math.E, math.Phi, math.Sqrt(3)}
+
+	// This is just enough configuration to e on the right side
+	// and configures the left side for the same
+	lhs := lhsFindsConstants(constants)
+	rhs := rhsFindsSqrt3EandPhi()
+
+	return appConf{
+		Constants: constants,
 		LHS:       lhs,
 		RHS:       rhs,
 	}

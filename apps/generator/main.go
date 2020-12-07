@@ -42,6 +42,8 @@ func main() {
 	// the tiny config is just big enough to find e on both sides
 	conf := tinyConf()
 
+	// TODO: need to serialize args to solver that generated the value
+
 	for v := range conf.LHS.Solve() {
 		log.Println(v)
 	}

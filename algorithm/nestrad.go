@@ -5,7 +5,7 @@ import (
 	"log"
 	"math"
 	"ramanujan/sequence"
-	"ramanujan/utils"
+	"ramanujan/slice"
 )
 
 // NestedRadical struct supports serialization of generator config
@@ -48,8 +48,8 @@ func (nr NestedRadical) solve(a, b []float64) (float64, error) {
 		return math.NaN(), fmt.Errorf("invalid argument: arrays must be same length")
 	}
 
-	utils.Reverse(a)
-	utils.Reverse(b)
+	slice.Reverse(a)
+	slice.Reverse(b)
 
 	for i := range a {
 		root = math.Sqrt(b[i]*root + a[i])

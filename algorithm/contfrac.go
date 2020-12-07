@@ -1,11 +1,14 @@
 package algorithm
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"html/template"
 	"log"
 	"math"
 	"ramanujan/sequence"
-	"ramanujan/utils"
+	"ramanujan/slice"
 )
 
 // ContinuedFraction struct to support serialization of generator config
@@ -49,6 +52,68 @@ func (cf ContinuedFraction) Solve() <-chan float64 {
 	return ch
 }
 
+func (cf ContinuedFraction) String(a, b []float64) string {
+
+	if len(a) < 5 || len(b) < 5 {
+		panic(errors.New("Arguments must both have len() >= 4"))
+	}
+
+	res, err := cf.solve(a, b)
+	if err != nil {
+		panic(err)
+	}
+
+	b = b[:4]
+	a = a[:4]
+
+	// extract all the signs from the values of b and then make all b positive
+	sign := make([]string, 4)
+	for i := range b {
+		if b[i] > 0 {
+			sign[i] = "+"
+		} else {
+			sign[i] = "-"
+			b[i] = math.Abs(b[i])
+		}
+	}
+
+	type tmpdata struct {
+		A      []float64
+		B      []float64
+		Sign   []string
+		Result float64
+		Tabs   []string
+	}
+
+	tabs := make([]string, 4)
+	tabs[0] = "\t"
+	tabs[1] = "\t\t"
+	tabs[2] = "\t\t\t"
+	tabs[3] = "\t\t\t\t"
+
+	dat := tmpdata{A: a, B: b, Sign: sign, Result: res, Tabs: tabs}
+
+	tmpl, err := template.New("tmp").Parse(`{{range $i, $a := .A}}
+{{$z := index .A $i}}{{$a}}
+	{{end}}
+			[...]`)
+
+	// 			{{index .B $i}}
+	// {{$a}} {{index .Sign $i}} ------------
+	// {{end}}
+
+	if err != nil {
+		panic(err)
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, dat); err != nil {
+		panic(err)
+	}
+
+	return buf.String()
+}
+
 func (cf ContinuedFraction) solve(a, b []float64) (float64, error) {
 	var res float64
 	res = 1
@@ -75,8 +140,8 @@ func (cf ContinuedFraction) solve(a, b []float64) (float64, error) {
 		return math.NaN(), fmt.Errorf("Expected len(a) == len(b) a:%d b:%d", len(a), len(b))
 	}
 
-	utils.Reverse(a)
-	utils.Reverse(b)
+	slice.Reverse(a)
+	slice.Reverse(b)
 
 	for i := range a {
 		if res == 0 {
