@@ -1,72 +1,71 @@
 package algorithm
 
-// import (
-// 	"math"
-// 	"testing"
-// )
+import (
+	"math"
+	"ramanujan/sequence"
+	"testing"
+)
 
-// func TestNRPhi(t *testing.T) {
-// 	a := []float64{1, 0, 0}
-// 	b := []float64{1, 0, 0}
+func TestNRGetType(t *testing.T) {
+	cf := NestedRadical{}
+	if cf.GetType() != NestedRad {
+		t.Log("expected type NestedRad but got", cf.GetType())
+		t.Fail()
+	}
+}
 
-// 	aSeq := make([]float64, 200)
-// 	bSeq := make([]float64, 200)
+// TestNRPhi finds the constant phi using a nested radical
+func TestNRPhi(t *testing.T) {
+	// aSeq := make([]float64, 200)
+	// bSeq := make([]float64, 200)
 
-// 	for i := range aSeq {
-// 		aSeq[i] = polynomial.Solve(a, float64(i))
-// 		bSeq[i] = polynomial.Solve(b, float64(i))
-// 	}
+	a := sequence.Polynomial{
+		A:    []float64{1, 2},
+		B:    []float64{0, 1},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
 
-// 	// Solve the nested radical for phi
-// 	res, err := Solve(aSeq, bSeq)
-// 	if err != nil {
-// 		t.Log(err)
-// 		t.Fail()
-// 	}
+	nr := NestedRadical{A: a, B: a}
 
-// 	if res != math.Phi {
-// 		t.Log("expected", res, "==", math.Phi)
-// 		t.Fail()
-// 	}
-// }
+	// Solve the nested radical for phi
+	for res := range nr.Solve() {
+		if res.Result == math.Phi {
+			return
+		}
+	}
 
-// func TestRamanNR(t *testing.T) {
-// 	a := []float64{1, 0, 0}
-// 	b := []float64{2, 1, 0}
+	t.Log("not found:", math.Phi)
+	t.Fail()
+}
 
-// 	aSeq := make([]float64, 200)
-// 	bSeq := make([]float64, 200)
+func TestRamanNR(t *testing.T) {
+	a := sequence.Polynomial{
+		A:    []float64{1, 2},
+		B:    []float64{0, 1},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
 
-// 	for i := range aSeq {
-// 		aSeq[i] = polynomial.Solve(a, float64(i))
-// 		bSeq[i] = polynomial.Solve(b, float64(i))
-// 	}
+	b := sequence.Polynomial{
+		A:    []float64{2, 3},
+		B:    []float64{1, 2},
+		C:    []float64{0, 1},
+		From: 0,
+		To:   200,
+	}
 
-// 	// Finds 3  (Ramanujan’s nested radical)
-// 	res, err := Solve(aSeq, bSeq)
-// 	if err != nil {
-// 		t.Log(err)
-// 		t.Fail()
-// 	}
+	nr := NestedRadical{A: a, B: b}
 
-// 	if res != 3 {
-// 		t.Log("expected", res, "== 3")
-// 		t.Fail()
-// 	}
-// }
+	// Finds 3  (Ramanujan’s nested radical)
+	for res := range nr.Solve() {
+		if res.Result == 3 {
+			return
+		}
+	}
 
-// func TestMismatchedLen(t *testing.T) {
-// 	a := []float64{1, 0, 0}
-// 	b := []float64{2, 1}
-// 	_, err := Solve(a, b)
-// 	if err == nil {
-// 		t.Log("expected error for mismatched array lengths")
-// 		t.Fail()
-// 	}
-
-// 	_, err = Solve(b, a)
-// 	if err == nil {
-// 		t.Log("expected error for mismatched array lengths")
-// 		t.Fail()
-// 	}
-// }
+	t.Log("did not find 3")
+	t.Fail()
+}

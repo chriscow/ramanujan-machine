@@ -32,7 +32,7 @@ type Polynomial struct {
 // ranges passed in and the values in the range s.From -> s.To
 // and returns them through a channel
 func (s Polynomial) Next() <-chan []float64 {
-	ch := make(chan []float64)
+	ch := make(chan []float64, 100)
 
 	coeff := coefficients(s.A, s.B, s.C)
 

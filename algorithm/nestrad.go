@@ -6,11 +6,18 @@ import (
 	"math"
 	"ramanujan/sequence"
 	"ramanujan/slice"
+
+	"github.com/shamaton/msgpack"
 )
 
 // NestedRadical struct supports serialization of generator config
 type NestedRadical struct {
 	A, B sequence.Generator
+}
+
+// GetType returns the type ID representing this algorithm
+func (nr NestedRadical) GetType() AlgoType {
+	return NestedRad
 }
 
 // Solve calculates a value by using the sequence of values passed in a
@@ -21,8 +28,8 @@ type NestedRadical struct {
 // See: https://www.johndcook.com/blog/2013/09/13/ramanujans-nested-radical/
 //
 // arguments a and b are expected to be the same length
-func (nr NestedRadical) Solve() <-chan float64 {
-	ch := make(chan float64)
+func (nr NestedRadical) Solve() <-chan Solution {
+	ch := make(chan Solution, 100)
 
 	go func() {
 		defer close(ch)
@@ -32,7 +39,14 @@ func (nr NestedRadical) Solve() <-chan float64 {
 				if err != nil {
 					log.Fatal("continued fraction misconfigured", err)
 				}
-				ch <- res
+
+				arg := [][]float64{a, b}
+				b, err := msgpack.Encode(arg)
+				if err != nil {
+					panic(err)
+				}
+
+				ch <- Solution{Type: NestedRad, Args: b, Result: res}
 			}
 		}
 	}()

@@ -9,11 +9,18 @@ import (
 	"math"
 	"ramanujan/sequence"
 	"ramanujan/slice"
+
+	"github.com/shamaton/msgpack"
 )
 
 // ContinuedFraction struct to support serialization of generator config
 type ContinuedFraction struct {
 	A, B sequence.Generator
+}
+
+// GetType returns the type ID representing this algorithm
+func (cf ContinuedFraction) GetType() AlgoType {
+	return ContFrac
 }
 
 // Solve calculates the continued fraction using the sequence of elements as
@@ -33,16 +40,28 @@ type ContinuedFraction struct {
 // otherwise the result is
 //
 // a[0] + b[0] / (a[1] + b[1] / (a[2] + b[2] / a[3] ...))
-func (cf ContinuedFraction) Solve() <-chan float64 {
-	ch := make(chan float64)
+func (cf ContinuedFraction) Solve() <-chan Solution {
+	ch := make(chan Solution, 100)
 
 	go func() {
 		defer close(ch)
 		for a := range cf.A.Next() {
 			for b := range cf.B.Next() {
-				res, err := cf.solve(a, b)
+				val, err := cf.solve(a, b)
 				if err != nil {
 					log.Fatal("continued fraction misconfigured", err)
+				}
+
+				arg := [][]float64{a, b}
+				b, err := msgpack.Encode(arg)
+				if err != nil {
+					panic(err)
+				}
+
+				res := Solution{
+					Type:   ContFrac,
+					Args:   b,
+					Result: val,
 				}
 				ch <- res
 			}

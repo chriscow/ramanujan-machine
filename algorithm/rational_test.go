@@ -1,5 +1,15 @@
 package algorithm
 
+import "testing"
+
+func TestRatGetType(t *testing.T) {
+	cf := RationalFunc{}
+	if cf.GetType() != Rational {
+		t.Log("expected type Rational but got", cf.GetType())
+		t.Fail()
+	}
+}
+
 // func TestRationalE(t *testing.T) {
 // 	// rational function for e
 // 	coeffA := []float64{0, 1, 0}

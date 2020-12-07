@@ -1,7 +1,6 @@
 package sequence
 
 import (
-	"ramanujan/algorithm"
 	"reflect"
 	"testing"
 )
@@ -28,50 +27,12 @@ func TestIntSeq(t *testing.T) {
 		PfxCount: 1,
 	}
 
-	for seq := range seq.Generate(args) {
+	for seq := range seq.Next() {
 		if !reflect.DeepEqual(seq, comp[i]) {
 			t.Log("expected sequences to be the same")
 			t.Log(seq, comp[i])
 			t.Fail()
 		}
 		i++
-	}
-}
-
-func TestCFSeq(t *testing.T) {
-	iseq := Integer{
-		Digits:   []int{1, 2},
-		Count:    2,
-		Repeat:   200,
-		Prefix:   []int{1},
-		PfxCount: 1,
-	}
-
-	comp := []float64{3, 1, 2, 1, 2, 1, 2, 1, 2}
-
-	i := 0
-	for seq := range iseq.Next() {
-		if i == 1 {
-			if !reflect.DeepEqual(seq, comp) {
-				t.Log("expected second sequence incorrect")
-				t.Log("expected:", comp)
-				t.Log("got:", seq)
-				t.Fail()
-			}
-
-			cf := algorithm.ContinuedFraction{}
-			res, err := cf.Solve(seq, nil)
-			if err != nil {
-				t.Log("continued fraction", err)
-				t.Fail()
-			}
-
-			if res != 3 {
-				t.Log("expected continued fraction == 3 but got", res)
-				t.Fail()
-			}
-
-			return
-		}
 	}
 }

@@ -25,26 +25,26 @@ type side struct {
 // FINALLY, execute the algorithm with each sequence generated. Essentially this
 // is calculating the algorithm value with a brute force approach with every
 // possible set of values within the sequence range generated.
-func (conf side) Solve() <-chan float64 {
-	ch := make(chan float64)
+func (conf side) Solve() <-chan algorithm.Solution {
+	ch := make(chan algorithm.Solution)
 
 	go func() {
 		defer close(ch)
 
 		for _, algFunc := range conf.Algorithms {
 
-			for val := range algFunc.Solve() {
+			for sln := range algFunc.Solve() {
 				// see if we are supposed to ignore the returned value
 				ignore := false
 				for _, i := range conf.Ignore {
-					if val == i {
+					if sln.Result == i {
 						ignore = true
 						break
 					}
 				}
 
 				if !ignore {
-					ch <- val
+					ch <- sln
 				}
 			}
 		}

@@ -20,6 +20,14 @@ func (m mockSeq) Next() <-chan []float64 {
 	return ch
 }
 
+func TestCFGetType(t *testing.T) {
+	cf := ContinuedFraction{}
+	if cf.GetType() != ContFrac {
+		t.Log("expected type ContFrac but got", cf.GetType())
+		t.Fail()
+	}
+}
+
 func TestCFPhi(t *testing.T) {
 	ones := make([]float64, 200)
 
@@ -32,9 +40,9 @@ func TestCFPhi(t *testing.T) {
 		B: mockSeq{Seq: ones},
 	}
 
-	for res := range cf.Solve() {
-		if res != math.Phi {
-			t.Log("expected", res, "==", math.Phi)
+	for sln := range cf.Solve() {
+		if sln.Result != math.Phi {
+			t.Log("expected", sln.Result, "==", math.Phi)
 			t.Fail()
 		}
 	}
@@ -53,7 +61,7 @@ func TestCFPhi2(t *testing.T) {
 	}
 
 	for res := range cf.Solve() {
-		if res != math.Phi {
+		if res.Result != math.Phi {
 			t.Log("expected", res, "==", math.Phi)
 			t.Fail()
 		}
@@ -61,6 +69,16 @@ func TestCFPhi2(t *testing.T) {
 }
 
 // TestCFEuler finds the Euler constant using a continued fraction of the form:
+//
+//			1
+//	3  -  ------
+//				2
+//		4  -  ------
+//					3
+//			5  -  ------
+//						4
+//				6  -  ------
+//						[...]
 //
 func TestCFEuler(t *testing.T) {
 
@@ -86,20 +104,22 @@ func TestCFEuler(t *testing.T) {
 	}
 
 	for res := range cf.Solve() {
-		if res != math.E {
-			t.Log("expected", res, "==", math.E)
-			t.Fail()
+		if res.Result == math.E {
+			return
 		}
 	}
-}
 
-func TestStringPhi(t *testing.T) {
-	ones := make([]float64, 50)
-	for i := range ones {
-		ones[i] = 1
-	}
-
-	cf := ContinuedFraction{}
-	t.Log(cf.String(ones, ones))
+	t.Log("did not find", math.E)
 	t.Fail()
 }
+
+// func TestStringPhi(t *testing.T) {
+// 	ones := make([]float64, 50)
+// 	for i := range ones {
+// 		ones[i] = 1
+// 	}
+
+// 	cf := ContinuedFraction{}
+// 	t.Log(cf.String(ones, ones))
+// 	t.Fail()
+// }
