@@ -10,6 +10,7 @@ import (
 	"ramanujan/algorithm"
 	"runtime"
 	"strconv"
+	"time"
 
 	"golang.org/x/sync/semaphore"
 )
@@ -60,8 +61,26 @@ func main() {
 	if err := checkEnv(); err != nil {
 		log.Fatal(err)
 	}
-	// the tiny config is just big enough to find e on both sides
 
-	// TODO: need to serialize args to solver that generated the value
+	lhs := make(map[string][]algorithm.Solution)
+	rhs := make(map[string][]algorithm.Solution)
 
+	conf := bigConf()
+
+	start := time.Now()
+	process(conf.LHS, lhs)
+	process(conf.RHS, rhs)
+	elapsed := time.Since(start)
+
+	log.Println("elapsed:", elapsed.Seconds())
+	for k := range lhs {
+		log.Println("lhs key:", k)
+		if rlist, ok := rhs[k]; ok {
+			// found in both sides
+			log.Println("found", k, "on both sides")
+			for i := range rlist {
+				log.Println("index:", i, "type:", rlist[i].Type, "result:", rlist[i].Result)
+			}
+		}
+	}
 }
