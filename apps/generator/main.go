@@ -1,12 +1,8 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"math"
-	"os"
-	"path"
 	"ramanujan/algorithm"
 	"runtime"
 	"strconv"
@@ -15,27 +11,15 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
+const (
+	defaultArgs = "default-args.json"
+	argsUsage   = "-args args.json"
+)
+
 var (
 	maxWorkers = runtime.GOMAXPROCS(0)
 	sem        = semaphore.NewWeighted(int64(maxWorkers))
 )
-
-func (c appConf) Save() {
-	b, err := json.Marshal(c)
-	if err != nil {
-		log.Fatal("marshal:", err)
-	}
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		log.Fatal("Getwd:", err)
-	}
-
-	err = ioutil.WriteFile(path.Join(cwd, ".conf/tiny.json"), b, os.FileMode(0755))
-	if err != nil {
-		log.Fatal("WriteFile:", err)
-	}
-}
 
 func process(s side, m map[string][]algorithm.Solution) {
 	for v := range s.Solve() {
