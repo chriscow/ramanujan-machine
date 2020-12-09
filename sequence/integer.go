@@ -10,7 +10,7 @@ type Integer struct {
 	PfxCount      int
 }
 
-// Next generates all possible integer sequences
+// Next generates integer cartesean product sequences
 //
 // Arguments:
 // 	digits - The digits to use to generate the primary part of the sequence

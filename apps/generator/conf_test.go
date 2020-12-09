@@ -2,31 +2,28 @@ package main
 
 import (
 	"math"
-	"os"
 	"ramanujan/algorithm"
 	"testing"
 	"time"
 )
 
-func TestForProfiling(t *testing.T) {
-	if os.Getenv("RAMAN_PROFILE") == "" {
-		return
-	}
+func BenchmarkConf(b *testing.B) {
 
 	lhs := make(map[string][]algorithm.Solution)
 	rhs := make(map[string][]algorithm.Solution)
 
-	conf := bigConf()
+	conf := medConf()
 
 	start := time.Now()
-	process(conf.LHS, lhs)
-	process(conf.RHS, rhs)
-	elapsed := time.Since(start)
-	t.Log("elapsed:", elapsed.Seconds())
-	for k := range lhs {
-		if _, ok := rhs[k]; ok {
-		}
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		process(conf.LHS, lhs)
+		process(conf.RHS, rhs)
 	}
+	elapsed := time.Since(start)
+	b.Log("elapsed:", elapsed.Seconds())
 }
 
 func TestRHSFindsSqrt3EandPhi(t *testing.T) {
